@@ -12,25 +12,32 @@ app.configure(function() {
     app.use(express.static(path.join(__dirname, 'public')));
 });
 
-var server = http.createServer(app).listen(3000, '0.0.0.0', function() {
-    console.log("Express server listening on port 3000");
+var server = http.createServer(app).listen(process.env.PORT, process.env.BIND_IP, function() {
+    console.log("Express server listening on port " + process.env.PORT);
 });
 
 io = require('socket.io').listen(server);
 
-var term = pty.spawn('bash', [], {
-    name: 'xterm-color',
-    cols: 80,
-    rows: 30,
-    cwd: process.env.HOME,
-    env: process.env
-});
+io.set('transports', ['htmlfile', 'xhr-polling', 'jsonp-polling']);
 
 io.sockets.on('connection', function(socket) {
     socket.on('data', function(data) {
        term.write(data);
     });
+
+    var term = pty.spawn('bash', [], {
+        name: 'xterm-color',
+        cols: 200,
+        rows: 50,
+        cwd: process.env.HOME,
+        env: process.env
+    });
+
     term.on('data', function(data) {
         socket.emit('data', data);
+    });
+
+    socket.on('disconnect', function() {
+        term.destroy();
     });
 });
