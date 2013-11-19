@@ -1,61 +1,64 @@
-<style>
-  html {
-    background: #555;
-  }
+<!doctype html>
+<html>
+    <head>
+        <title>Simple TTY</title>
+        <style>
+            html {
+                background: #555;
+            }
 
-  h1 {
-    margin-bottom: 20px;
-    font: 20px/1.5 sans-serif;
-  }
+            .terminal {
+                margin: 20px auto;
+                width: 1280px;
+                height: 660px;
+                border: #000 solid 5px;
+                font-family: Menlo, monospace;
+                font-size: 13px;
+                color: #f0f0f0;
+                background: #000;
+            }
 
-  .terminal {
-    margin: 20px auto;
-    width: 1280px;
-    height: 660px;
-    border: #000 solid 5px;
-    font-family: Menlo, monospace;
-    font-size: 13px;
-    color: #f0f0f0;
-    background: #000;
-  }
+            .terminal-cursor {
+                color: #000;
+                background: #f0f0f0;
+            }
+        </style>
+    </head>
+    <body>
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="term.js"></script>
+        <script>
+            window.addEventListener('load', function() {
+                var socket = io.connect();
+                socket.on('connect', function() {
+                    var term = new Terminal({
+                        cols: 160,
+                        rows: 44,
+                        colors: Terminal.xtermColors
+                    });
 
-  .terminal-cursor {
-    color: #000;
-    background: #f0f0f0;
-  }
-</style>
-<script src="/socket.io/socket.io.js"></script>
-<script src="term.js"></script>
-<script>
-window.addEventListener('load', function() {
-  var socket = io.connect();
-  socket.on('connect', function() {
-    var term = new Terminal({
-      cols: 160,
-      rows: 44,
-      colors: Terminal.xtermColors
-    });
+                    term.on('data', function(data) {
+                        socket.emit('data', data);
+                    });
 
-    term.on('data', function(data) {
-      socket.emit('data', data);
-    });
+                    term.on('title', function(title) {
+                        document.title = title;
+                    });
 
-    term.on('title', function(title) {
-      document.title = title;
-    });
+                    window.term = term;
+                    term.open(document.body);
 
-    window.term = term;
-    term.open(document.body);
+                    socket.on('data', function(data) {
+                        term.write(data);
+                    });
 
-    socket.on('data', function(data) {
-      term.write(data);
-    });
+                    socket.on('disconnect', function() {
+                        term.destroy();
+                    });
 
-    socket.on('disconnect', function() {
-      term.destroy();
-    });
-
-    window.socket = socket;
-  });
-}, false);
-</script>
+                    window.socket = socket;
+                });
+            }, false);
+        </script>
+    </body>
+</html>
