@@ -1,5 +1,4 @@
-<script src="/socket.io/socket.io.js"></script>
-<script src="term.js"></script>
+<link href='http://fonts.googleapis.com/css?family=Inconsolata:400,700' rel='stylesheet' type='text/css'>
 <style>
   html {
     background: #555;
@@ -11,10 +10,10 @@
   }
 
   .terminal {
-    margin: 0 auto;
+    float: left;
     border: #000 solid 5px;
-    font-family: "DejaVu Sans Mono", "Liberation Mono", monospace;
-    font-size: 11px;
+    font-family: "Inconsolata", "DejaVu Sans Mono", "Liberation Mono", monospace;
+    font-size: 14px;
     color: #f0f0f0;
     background: #000;
   }
@@ -24,6 +23,8 @@
     background: #f0f0f0;
   }
 </style>
+<script src="/socket.io/socket.io.js"></script>
+<script src="term.js"></script>
 <script>
 window.addEventListener('load', function() {
   var socket = io.connect();
