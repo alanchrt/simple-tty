@@ -1,0 +1,67 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Simple TTY</title>
+        <link rel="shortcut icon" href="img/favicon.ico">
+        <style>
+            html {
+                background: #555;
+            }
+
+            .terminal {
+                margin: 20px auto;
+                width: 1280px;
+                height: 660px;
+                border: #000 solid 5px;
+                font-family: Menlo, monospace;
+                font-size: 13px;
+                color: #f0f0f0;
+                background: #000;
+            }
+
+            .terminal-cursor {
+                color: #000;
+                background: #f0f0f0;
+            }
+        </style>
+    </head>
+    <body>
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="term.js"></script>
+        <script>
+            window.addEventListener('load', function() {
+                var socket = io.connect();
+                socket.on('connect', function() {
+                    var host = window.location.host;
+                    socket.emit('spawn', {
+                        name: host.substring(0, host.length - 15)
+                    });
+                    socket.on('start', function() {
+                        var term = new Terminal({
+                            cols: 160,
+                            rows: 44,
+                            colors: Terminal.xtermColors
+                        });
+
+                        term.on('title', function(title) {
+                            document.title = title;
+                        });
+
+                        window.term = term;
+                        term.open(document.body);
+
+                        socket.on('data', function(data) {
+                            term.write(data);
+                        });
+
+                        socket.on('disconnect', function() {
+                            term.destroy();
+                        });
+                    });
+                });
+
+                window.socket = socket;
+            }, false);
+        </script>
+    </body>
+</html>

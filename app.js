@@ -12,6 +12,10 @@ app.configure(function() {
     app.use(express.static(path.join(__dirname, 'public')));
 });
 
+app.get('/', function(req, res) {
+    res.sendfile('terminal.html');
+});
+
 var server = http.createServer(app).listen(process.env.PORT, process.env.BIND_IP, function() {
     console.log("Express server listening on port " + process.env.PORT);
 });
