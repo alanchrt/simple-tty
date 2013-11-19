@@ -1,0 +1,12 @@
+{
+  "name": "tty",
+  "description": "in-browser terminal",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "pty.js": "0.2.3",
+    "term.js": "0.0.3",
+    "express": "3.x",
+    "socket.io": "~0.9.6"
+  }
+}
