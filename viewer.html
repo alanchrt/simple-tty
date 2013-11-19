@@ -33,8 +33,10 @@
                 var socket = io.connect();
                 socket.on('connect', function() {
                     var host = window.location.host;
+                    var session = host.substring(0, host.length - 15);
+                    if (!session.match(/^[\w-_]+$/)) return;
                     socket.emit('spawn', {
-                        name: host.substring(0, host.length - 15)
+                        name: session
                     });
                     socket.on('start', function() {
                         var term = new Terminal({
