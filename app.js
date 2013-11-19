@@ -27,8 +27,8 @@ io.sockets.on('connection', function(socket) {
 
     var term = pty.spawn('bash', [], {
         name: 'xterm-color',
-        cols: 200,
-        rows: 50,
+        cols: 160,
+        rows: 40,
         cwd: process.env.HOME,
         env: process.env
     });
